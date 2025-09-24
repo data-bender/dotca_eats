@@ -14,9 +14,9 @@ def get_lat_lng_from_postal(postal_code):
     url = "https://maps.googleapis.com/maps/api/geocode/json"
     params = {"address": f"{postal_code}, Canada", "key": API_KEY}
     response = requests.get(url, params=params).json()
+    st.write("Geocoding API response:", response)
     if response.get("results"):
         loc = response["results"][0]["geometry"]["location"]
-        print(response)
         return loc["lat"], loc["lng"]
     else:
         raise ValueError(f"Postal code not found: {postal_code}")
