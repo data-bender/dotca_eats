@@ -16,6 +16,7 @@ def get_lat_lng_from_postal(postal_code):
     response = requests.get(url, params=params).json()
     if response.get("results"):
         loc = response["results"][0]["geometry"]["location"]
+        print(response)
         return loc["lat"], loc["lng"]
     else:
         raise ValueError(f"Postal code not found: {postal_code}")
