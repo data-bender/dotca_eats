@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from ca_scrapper import find_ca_food_places, FOOD_TYPES  # import your existing functions
+from ca_scrapper import find_ca_food_places, FOOD_TYPES  
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Canadian Food Places Finder", layout="centered")
@@ -59,18 +59,18 @@ if st.button("Search"):
                         mime="text/csv"
                     )
                     
+                    df_table = df_display.drop(columns=["lat", "lon"], errors="ignore")
+                    st.write(
+                        df_table.to_html(escape=False, index=False),
+                        unsafe_allow_html=True
+                    )
+
                     st.subheader("📍 Map of results")
                     map_df = df[['distance_km', 'name', 'address', 'website', 'maps_link', 'types']].copy()
                     map_df['lat'] = df.apply(lambda r: r.get('geometry', {}).get('lat', None), axis=1)
                     map_df['lon'] = df.apply(lambda r: r.get('geometry', {}).get('lon', None), axis=1)
                     
                     st.map(df[['lat', 'lon']])
-
-                    df_table = df_display.drop(columns=["lat", "lon"], errors="ignore")
-                    st.write(
-                        df_table.to_html(escape=False, index=False),
-                        unsafe_allow_html=True
-                    )
 
             except Exception as e:
                 st.error(f"Error: {e}")
