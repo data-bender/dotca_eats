@@ -35,9 +35,13 @@ def get_places(lat, lng, radius_m, place_type):
 
     while True:
         response = requests.get(url, params=params).json()
-        # filtered = [r for r in response.get("results", []) if any(t in FOOD_TYPES for t in r.get("types", []))]
-        # all_results.extend(filtered)
-        all_results.extend(response.get("results", []))
+        filtered = [
+            r for r in response.get("results", [])
+            if place_type in r.get("types", [])
+        ]
+        
+        all_results.extend(filtered)
+        # all_results.extend(response.get("results", []))
 
         next_page = response.get("next_page_token")
         if next_page:
@@ -69,8 +73,6 @@ def find_ca_food_places(postal_code, radius_km, selected_types):
             lat, lng = loc.get("lat"), loc.get("lng")
             website = details.get("website")
             if website and (website.endswith(".ca") or ".ca/" in website):
-                loc = details.get("geometry", {}).get("location", {})
-                lat, lng = loc.get("lat"), loc.get("lng")
                 distance_m = haversine(lat_origin, lng_origin, lat, lng) if lat and lng else None
                 # Only include types from our predefined list
                 types = [t for t in details.get("types", []) if t in FOOD_TYPES]
